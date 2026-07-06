@@ -1,10 +1,12 @@
 from dotenv import load_dotenv
-
-load_dotenv()
-
 from langchain.tools import tool
 from typing import Dict, Any
 from tavily import TavilyClient
+from langchain.agents import create_agent
+from langchain.chat_models import init_chat_model
+from langchain_groq import ChatGroq
+
+load_dotenv()
 
 tavily_client = TavilyClient()
 
@@ -25,10 +27,21 @@ Return recipe suggestions and eventually the recipe instructions to the user, if
 
 """
 
-from langchain.agents import create_agent
 
-agent = create_agent(
-    model="gpt-5-nano",
-    tools=[web_search],
-    system_prompt=system_prompt
+
+model = init_chat_model(
+    "llama-3.3-70b-versatile",
+    model_provider="groq",
+    temperature=1.0,
 )
+
+agent = create_agent(model=model,
+                     tools=[web_search],
+                system_prompt=system_prompt)
+
+# agent = create_agent(
+#     model="gpt-5-nano",
+#     tools=[web_search],
+#     system_prompt=system_prompt
+# )
+
